@@ -1,0 +1,2 @@
+# ExcelManagment
+This repository includes one excel file that contains 15-minute intervals for a 1 year period for different buildings. Each building is represented in a seperate sheet. The python script uses the openpyxl module to manage the excel file. The output of the script is the daytime minimum load for every building. The daytime minimum load is the smallest amount of kWh a infrastructure needs during the day , given a 1 year period. The script includes detailed comments for each section. Feel free to comment.
