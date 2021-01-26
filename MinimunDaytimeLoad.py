@@ -130,6 +130,38 @@ def allDaytimekWh(allSheets):
         yield min(temp)
 
 #-----------------------------------------------------------------------------------------------------------
+def averageMinLoad(allSheets):
+    #For finding the daytime indexes
+    allIndex = list(findIndxHour(allSheets))
+    for i in range(0, len(allSheets)):
+        #Temp will hold the kWh values of the daytime intervals
+        temp = []
+        print(allSheets[i].title)
+        rows = list(iterRows(allSheets[i]))
+        #kWh holds ALL kWh values in the excel sheet
+        kWh = list(daytimekWh(rows))
+        # day holds all the interval kWh of a single day
+        day = []
+        #holds all the minimums of each day
+        allMini = []
+        for z in range(0, len(kWh)):
+            # Checks if the index i is inside the first element of the allIndex list
+            # Uses allIndex[0] because all sheets have the same index for their daytime.
+            if allIndex[0].__contains__(z) and kWh[z] != 'None' and float(kWh[z]) != 0:
+                # if it is a daytime interval, it adds it to the temp list
+                temp.append(float(kWh[z]))
+                # append each kWh value for an interval
+                day.append(float(kWh[z]))
+            #This if statements allows the code to add the minimum of a day to allMini and then
+            # reinitialize day
+            if len(day) == 48:
+                allMini.append(min(day))
+                day = []
+        # for the ith sheet we find the average of all the lows
+        average = sum(allMini)/len(allMini)
+        # yields the average of each sheet
+        yield average
+#-----------------------------------------------------------------------------------------------------------
 '''Putting everything together'''
 
 sheets = listOfSheets(workbook)
@@ -137,11 +169,17 @@ sheets = listOfSheets(workbook)
 daytimeMinLoad = list(allDaytimekWh(sheets))
 
 # result stores a dictionary with the building as Key and its daytime minimum as value
-result = {}
+absolute = {}
 
 for i in range(0, len(sheets)):
-    result[sheets[i].title] = int(daytimeMinLoad[i])
-
-print(result)
-
-
+    absolute[sheets[i].title] = int(daytimeMinLoad[i])
+print("Absolute daytime minimum: ")
+print(absolute)
+#-----------------------------------------------------------------------------------------------------------
+'''For average daytime minimum load'''
+average = {}
+averages = list(averageMinLoad(sheets))
+for i in range(0, len(sheets)):
+    average[sheets[i].title] = int(averages[i])
+print("Average daytime minimum: ")
+print(average)
